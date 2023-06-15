@@ -2,7 +2,7 @@ import * as THREE from 'three'
 
 export function createSphereSkybox(scene) {
   const textloader = new THREE.TextureLoader().load('models/bg.jpeg')
-  const geometry = new THREE.SphereGeometry(500, 32, 32)
+  const geometry = new THREE.SphereGeometry(50, 32, 32)
   const material = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide,
     map: textloader
@@ -19,6 +19,12 @@ export function createSphereSkybox(scene) {
   scene.add(sphere)
 }
 
+export function initScene() {
+  const scene = new THREE.Scene()
+  scene.fog = new THREE.Fog( 0xcccccc, 10, 100 );
+  return scene
+}
+
 export function initRenderer() {
   const canvas = document.createElement('canvas')
   document.body.appendChild(canvas)
@@ -31,14 +37,14 @@ export function initRenderer() {
 
 export function initCamera(target) {
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000) // 创建透视相机
-  camera.position.set(2,2,2)
+  camera.position.set(0,2,2)
   camera.lookAt(target)
   return camera
 }
 
 export function initLight(scene) {
   const directionaLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionaLight.position.set(10, 10, 0);
+  directionaLight.position.set(15, 10, 5);
   directionaLight.castShadow = true;
   directionaLight.shadow.mapSize.width = 1024;
   directionaLight.shadow.mapSize.height = 1024;
@@ -52,4 +58,32 @@ export function initLight(scene) {
   scene.add( ambientLight );  
 
   return { directionaLight, ambientLight }
+}
+
+function getRandomMap(arr) {
+  const len = arr.length
+  const range = 1 / len
+  const rangeArr = []
+  for(let i = 0; i < len; i++) {
+    const min = range * i;
+    const max = range * (i + 1);
+    rangeArr.push({min, max, value: arr[i]})
+  }
+  return rangeArr
+}
+
+function getRangeMapValue(rangeArr, value) {
+  for (let i = 0, len = rangeArr.length; i < len; i++) {
+    const item = rangeArr[i]
+    if (value >= item.min && value <= item.max) {
+      return item.value
+    }
+  }
+  return getRangeMapValue(rangeArr, Math.random())
+}
+
+export function randomArr(arr, randomValue) {
+  const rangeArr = getRandomMap(arr)
+  const index = getRangeMapValue(rangeArr, randomValue)
+  return index
 }
