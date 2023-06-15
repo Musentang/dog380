@@ -29,10 +29,9 @@ export function initRenderer() {
   return renderer
 }
 
-export function initCamera() {
+export function initCamera(target) {
   const camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000) // 创建透视相机
   camera.position.set(2,2,2)
-  const target = new THREE.Vector3(0, 0.3, 0);
   camera.lookAt(target)
   return camera
 }
