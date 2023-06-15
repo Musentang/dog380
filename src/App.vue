@@ -29,6 +29,9 @@ createSphereSkybox(scene)
 const WAIT_ANIMATIONS = [0,1,3,9] // 待机 0,1,3,9
 const INTERACT_ANIMATIONS = [2,5,7,8] // 交互 2,5,7,8
 const MOVE_ANIMATIONS = [4,6] // 移动 4,6
+let dog380Status = 0 // 0 待机 1 交互 2 移动
+let currAction = null
+const actions = []
 function dogLoadSuccess(gltf) {
   var model = gltf.scene
   model.scale.set(0.3,0.3,0.3)
@@ -42,7 +45,6 @@ function dogLoadSuccess(gltf) {
 
   const animations = gltf.animations
   mixer = new THREE.AnimationMixer(model)
-  var actions = []
   animations.forEach(function (animation) {
     const action = mixer.clipAction(animation)
     action.clampWhenFinished = true
@@ -51,12 +53,17 @@ function dogLoadSuccess(gltf) {
     actions.push(action)
   })
   mixer.addEventListener('finished', () => {
-    // mixer.addEventListener('finished', mixerFinished)
+    if (dog380Status === 1) {
+      dog380Status = 0
+    }
+    currAction.reset().stop()
     const index = randomArr(WAIT_ANIMATIONS, Math.random())
-    console.log(index)
-    actions[index].reset().play()
+    console.log('wait', index)
+    currAction = actions[index]
+    currAction.reset().play()
   })
-  actions[0].play()
+  currAction = actions[0]
+  currAction.play()
 }
 
 function forestLoadSuccess(gltf) {
@@ -78,6 +85,8 @@ function forestLoadSuccess(gltf) {
 
 
 function run () {
+  stats.begin(); // ======= stats.begin =======
+
   mixer.update(clock.getDelta())
   controls.update()
   directionaLight.position.x -= 0.02
@@ -85,6 +94,9 @@ function run () {
     directionaLight.position.x = 15
   }
   renderer.render(scene, camera) // 渲染
+
+  stats.end();    // ======= stats.end =======
+
   requestAnimationFrame(run)
 }
 
@@ -104,20 +116,33 @@ document.addEventListener('click', e => {
   if (ponit3d) {
     console.log(ponit3d.object.name)
     if (ponit3d.object.name === 'Rover') {
-      dog380Click()
+      dog380Click(ponit3d.object)
     }
   }
 })
 
 function dog380Click() {
-
+  if (dog380Status === 1) return
+  currAction.reset().stop()
+  dog380Status = 1
+  const index = randomArr(INTERACT_ANIMATIONS, Math.random())
+  console.log(index)
+  currAction = actions[index]
+  currAction.play()
 }
+
+
 
 // helper =========
 const controls = new OrbitControls( camera, renderer.domElement )
 controls.target = target
 var axesHelper = new THREE.AxesHelper(5) 
 scene.add(axesHelper)
+
+var stats = new Stats();
+stats.domElement.style = 'position:fixed;top:0;left:0;z-index:10000;'
+stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
+document.body.appendChild(stats.domElement);
 // helper end=========
 
 </script>
