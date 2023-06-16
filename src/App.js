@@ -44,7 +44,7 @@ export function initCamera(target) {
 }
 
 export function initLight(scene) {
-  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.1);
+  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.0);
   directionaLight.position.set(30, 10, 10);
   directionaLight.castShadow = true;
   directionaLight.shadow.mapSize.width = 2048;
@@ -55,7 +55,7 @@ export function initLight(scene) {
   directionaLight.shadow.bias = -0.001;
   scene.add( directionaLight );
 
-  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.1 );
+  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.0 );
   scene.add( hemisphereLight );
   hemisphereLight.position.set(0, 10, 10)
 

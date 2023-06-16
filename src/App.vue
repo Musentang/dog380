@@ -19,12 +19,31 @@ const renderer = initRenderer()
 const camera = initCamera(target)
 const { directionaLight, hemisphereLight } = initLight(scene)
 
-gui.add(directionaLight, 'intensity', 0, 1)
-gui.add(hemisphereLight, 'intensity', 0, 1)
+const spotLight = new THREE.SpotLight( 0xfff5c9, 1.2 );
+spotLight.position.set( 0, 3, 0 );
+
+spotLight.castShadow = true;
+
+spotLight.shadow.mapSize.width = 1024;
+spotLight.shadow.mapSize.height = 1024;
+
+spotLight.shadow.camera.near = 0.1;
+spotLight.shadow.camera.far = 100;
+spotLight.shadow.camera.fov = 5;
+spotLight.shadow.bias = -0.001;
+spotLight.angle = Math.PI/13
+
+scene.add( spotLight );
+
+
+gui.add(spotLight, 'intensity', 0, 1)
+gui.add(spotLight.shadow, 'bias', -0.0001, 2)
+gui.add(spotLight.shadow.camera, 'fov', 0, 200)
 const orbitControls = initOrbitControls(camera, renderer.domElement, target)
 modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.glb').then(([dog, forest]) => {
   dogLoadSuccess(dog)
   forestLoadSuccess(forest)
+  // sunMove()
   run(0)
 })
 
@@ -87,29 +106,29 @@ function forestLoadSuccess(gltf) {
   })
 }
 
-new TWEEN.Tween(directionaLight.position).to({
-  x: -15
-}, 30000).start().repeat(Infinity)
+function sunMove() {
+  new TWEEN.Tween(directionaLight.position).to({
+    x: -15
+  }, 30000).start().repeat(Infinity)
+  
+  new TWEEN.Tween(directionaLight).to({
+    intensity: 1
+  }, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
+  
+  new TWEEN.Tween(hemisphereLight).to({
+    intensity: 0.6
+  }, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
+  
+  return TWEEN
+}
 
-new TWEEN.Tween(directionaLight).to({
-  intensity: 1
-}, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
-
-new TWEEN.Tween(hemisphereLight).to({
-  intensity: 0.6
-}, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
 function run () {
   stats.begin(); // ======= stats.begin =======
-  TWEEN.update()
 
+  TWEEN.update()
   mixer.update(clock.getDelta())
   orbitControls.update()
-  // directionaLight.position.x -= 0.02
-  // if (directionaLight.position.x < -15) {
-  //   directionaLight.position.x = 15
-    
-  // }
-  renderer.render(scene, camera) // 渲染
+  renderer.render(scene, camera)
 
   stats.end();    // ======= stats.end =======
 

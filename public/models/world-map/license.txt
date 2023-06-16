@@ -1,0 +1,11 @@
+Model Information:
+* title:	Map Lviv (Ukraine)
+* source:	https://sketchfab.com/3d-models/map-lviv-ukraine-4df5f2ce0d9040ad91939073dea66243
+* author:	burunduk (https://sketchfab.com/burunduk)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Map Lviv (Ukraine)" (https://sketchfab.com/3d-models/map-lviv-ukraine-4df5f2ce0d9040ad91939073dea66243) by burunduk (https://sketchfab.com/burunduk) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
