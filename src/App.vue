@@ -3,12 +3,13 @@
 
 <script setup>
 import * as THREE from 'three'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
-import { DragControls } from 'three/examples/jsm/controls/DragControls.js'
-import { GUI } from 'dat.gui'
-import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, randomArr } from '@/App.js'
+import * as TWEEN from '@tweenjs/tween.js'
+import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
-// const gui = new GUI()
+
+import { GUI } from 'dat.gui'
+const gui = new GUI()
+
 const clock = new THREE.Clock()
 let mixer = null
 const target = new THREE.Vector3(0, 0.3, 0)
@@ -16,8 +17,11 @@ const target = new THREE.Vector3(0, 0.3, 0)
 const scene = initScene()
 const renderer = initRenderer()
 const camera = initCamera(target)
-const { directionaLight, ambientLight } = initLight(scene)
+const { directionaLight, hemisphereLight } = initLight(scene)
 
+gui.add(directionaLight, 'intensity', 0, 1)
+gui.add(hemisphereLight, 'intensity', 0, 1)
+const orbitControls = initOrbitControls(camera, renderer.domElement, target)
 modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.glb').then(([dog, forest]) => {
   dogLoadSuccess(dog)
   forestLoadSuccess(forest)
@@ -83,16 +87,28 @@ function forestLoadSuccess(gltf) {
   })
 }
 
+new TWEEN.Tween(directionaLight.position).to({
+  x: -15
+}, 30000).start().repeat(Infinity)
 
+new TWEEN.Tween(directionaLight).to({
+  intensity: 1
+}, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
+
+new TWEEN.Tween(hemisphereLight).to({
+  intensity: 0.6
+}, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
 function run () {
   stats.begin(); // ======= stats.begin =======
+  TWEEN.update()
 
   mixer.update(clock.getDelta())
-  controls.update()
-  directionaLight.position.x -= 0.02
-  if (directionaLight.position.x < -15) {
-    directionaLight.position.x = 15
-  }
+  orbitControls.update()
+  // directionaLight.position.x -= 0.02
+  // if (directionaLight.position.x < -15) {
+  //   directionaLight.position.x = 15
+    
+  // }
   renderer.render(scene, camera) // 渲染
 
   stats.end();    // ======= stats.end =======
@@ -131,11 +147,7 @@ function dog380Click() {
   currAction.play()
 }
 
-
-
 // helper =========
-const controls = new OrbitControls( camera, renderer.domElement )
-controls.target = target
 var axesHelper = new THREE.AxesHelper(5) 
 scene.add(axesHelper)
 

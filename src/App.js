@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 
 export function createSphereSkybox(scene) {
   const textloader = new THREE.TextureLoader().load('models/bg.jpeg')
@@ -43,21 +44,37 @@ export function initCamera(target) {
 }
 
 export function initLight(scene) {
-  const directionaLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionaLight.position.set(15, 10, 5);
+  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.1);
+  directionaLight.position.set(30, 10, 10);
   directionaLight.castShadow = true;
-  directionaLight.shadow.mapSize.width = 1024;
-  directionaLight.shadow.mapSize.height = 1024;
+  directionaLight.shadow.mapSize.width = 2048;
+  directionaLight.shadow.mapSize.height = 2048;
   directionaLight.shadow.camera.near = 0.1;
   directionaLight.shadow.camera.far = 50;
   directionaLight.shadow.radius = 10
   directionaLight.shadow.bias = -0.001;
   scene.add( directionaLight );
 
-  const ambientLight = new THREE.AmbientLight( 0x404040, 2 ); // 柔和的白光
-  scene.add( ambientLight );  
+  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.1 );
+  scene.add( hemisphereLight );
+  hemisphereLight.position.set(0, 10, 10)
 
-  return { directionaLight, ambientLight }
+  // const ambientLight = new THREE.AmbientLight( 0x404040, 1 ); // 柔和的白光
+  // scene.add( ambientLight );  
+
+  return { directionaLight, hemisphereLight }
+}
+
+export function initOrbitControls(camera, domElement, target) {
+  const controls = new OrbitControls( camera, domElement )
+  controls.target = target
+  controls.enableDamping = true
+  controls.dampingFactor = 0.05
+  controls.maxDistance  = 3
+  controls.minDistance  = 0.5
+  controls.maxPolarAngle  = 1.6
+  controls.minPolarAngle  = 0.8
+  return controls
 }
 
 function getRandomMap(arr) {
