@@ -1,7 +1,9 @@
 <template>
+<Com3DBtn class="street-lamp-switch" v-model="switchOpen" />
 </template>
 
 <script setup>
+import Com3DBtn from '@/components/3DBtn.vue'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr } from '@/App.js'
@@ -17,24 +19,10 @@ const target = new THREE.Vector3(0, 0.3, 0)
 const scene = initScene()
 const renderer = initRenderer()
 const camera = initCamera(target)
-const { directionaLight, hemisphereLight } = initLight(scene)
+const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
+const switchOpen = ref(false)
 
-const spotLight = new THREE.SpotLight( 0xfff5c9, 1.2 );
-spotLight.position.set( 0, 3, 0 );
-
-spotLight.castShadow = true;
-
-spotLight.shadow.mapSize.width = 1024;
-spotLight.shadow.mapSize.height = 1024;
-
-spotLight.shadow.camera.near = 0.1;
-spotLight.shadow.camera.far = 100;
-spotLight.shadow.camera.fov = 5;
-spotLight.shadow.bias = -0.001;
-spotLight.angle = Math.PI/13
-
-scene.add( spotLight );
-
+watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
 
 gui.add(spotLight, 'intensity', 0, 1)
 gui.add(spotLight.shadow, 'bias', -0.0001, 2)
@@ -81,7 +69,6 @@ function dogLoadSuccess(gltf) {
     }
     currAction.reset().stop()
     const index = randomArr(WAIT_ANIMATIONS, Math.random())
-    console.log('wait', index)
     currAction = actions[index]
     currAction.reset().play()
   })
@@ -105,7 +92,7 @@ function forestLoadSuccess(gltf) {
     }
   })
 }
-
+sunMove()
 function sunMove() {
   new TWEEN.Tween(directionaLight.position).to({
     x: -15
@@ -118,8 +105,6 @@ function sunMove() {
   new TWEEN.Tween(hemisphereLight).to({
     intensity: 0.6
   }, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
-  
-  return TWEEN
 }
 
 function run () {
@@ -149,7 +134,6 @@ document.addEventListener('click', e => {
     ponit3d = intersects[0]
   } 
   if (ponit3d) {
-    console.log(ponit3d.object.name)
     if (ponit3d.object.name === 'Rover') {
       dog380Click(ponit3d.object)
     }
@@ -178,5 +162,10 @@ document.body.appendChild(stats.domElement);
 
 </script>
 
-<style scoped lang="scss">
+<style scoped>
+.street-lamp-switch {
+  position: fixed;
+  right: 0;
+  top: 20%;
+}
 </style>

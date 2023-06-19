@@ -56,13 +56,25 @@ export function initLight(scene) {
   scene.add( directionaLight );
 
   const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.0 );
-  scene.add( hemisphereLight );
   hemisphereLight.position.set(0, 10, 10)
+  scene.add( hemisphereLight );
 
   // const ambientLight = new THREE.AmbientLight( 0x404040, 1 ); // 柔和的白光
   // scene.add( ambientLight );  
 
-  return { directionaLight, hemisphereLight }
+  const spotLight = new THREE.SpotLight( 0xfff5c9, 0.0 );
+  spotLight.position.set( 0, 3, 0 );
+  spotLight.castShadow = true;
+  spotLight.shadow.mapSize.width = 1024;
+  spotLight.shadow.mapSize.height = 1024;
+  spotLight.shadow.camera.near = 0.1;
+  spotLight.shadow.camera.far = 100;
+  spotLight.shadow.camera.fov = 5;
+  spotLight.shadow.bias = -0.001;
+  spotLight.angle = Math.PI/13
+  scene.add( spotLight );
+
+  return { directionaLight, hemisphereLight, spotLight }
 }
 
 export function initOrbitControls(camera, domElement, target) {
