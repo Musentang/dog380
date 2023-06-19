@@ -9,29 +9,25 @@ import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
 
-import { GUI } from 'dat.gui'
-const gui = new GUI()
+// import { GUI } from 'dat.gui'
+// const gui = new GUI()
 
 const clock = new THREE.Clock()
 let mixer = null
-const target = new THREE.Vector3(0, 0.3, 0)
+const CAMERA_TARGET = new THREE.Vector3(0, 0.3, 0)
 
 const scene = initScene()
 const renderer = initRenderer()
-const camera = initCamera(target)
-const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
+const camera = initCamera(CAMERA_TARGET)
+const { directionaLight, directionaLightTarget, hemisphereLight, spotLight } = initLight(scene)
 const switchOpen = ref(false)
 
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
 
-gui.add(spotLight, 'intensity', 0, 1)
-gui.add(spotLight.shadow, 'bias', -0.0001, 2)
-gui.add(spotLight.shadow.camera, 'fov', 0, 200)
-const orbitControls = initOrbitControls(camera, renderer.domElement, target)
+const orbitControls = initOrbitControls(camera, renderer.domElement, CAMERA_TARGET)
 modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.glb').then(([dog, forest]) => {
   dogLoadSuccess(dog)
   forestLoadSuccess(forest)
-  // sunMove()
   run(0)
 })
 
@@ -86,12 +82,20 @@ function forestLoadSuccess(gltf) {
 
   model.traverse(function (child) {
     if (child instanceof THREE.Mesh) {
+      if (child.name.includes('Tree')) {
+        // child.material = new THREE.MeshPhysicalMaterial({
+        //   color: "#ffffff",
+        //   metalness: 1,
+        //   roughness: 0.7
+        // });
+      }
       child.castShadow = true 
       // child.material = new THREE.MeshStandardMaterial({  wireframe: false })
       child.receiveShadow = true // 模型接收阴影
     }
   })
 }
+
 sunMove()
 function sunMove() {
   new TWEEN.Tween(directionaLight.position).to({
@@ -134,6 +138,7 @@ document.addEventListener('click', e => {
     ponit3d = intersects[0]
   } 
   if (ponit3d) {
+    console.log(ponit3d.object.name);
     if (ponit3d.object.name === 'Rover') {
       dog380Click(ponit3d.object)
     }
@@ -158,6 +163,12 @@ var stats = new Stats();
 stats.domElement.style = 'position:fixed;top:0;left:0;z-index:10000;'
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.domElement);
+
+const helper = new THREE.DirectionalLightHelper( directionaLight, 5 );
+scene.add( helper );
+
+const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+scene.add( spotLightHelper );
 // helper end=========
 
 </script>

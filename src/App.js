@@ -44,20 +44,20 @@ export function initCamera(target) {
 }
 
 export function initLight(scene) {
-  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.0);
-  directionaLight.position.set(30, 10, 10);
-  directionaLight.castShadow = true;
-  directionaLight.shadow.mapSize.width = 2048;
-  directionaLight.shadow.mapSize.height = 2048;
-  directionaLight.shadow.camera.near = 0.1;
-  directionaLight.shadow.camera.far = 50;
+  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.0)
+  directionaLight.position.set(30, 10, 5)
+  directionaLight.castShadow = true
+  directionaLight.shadow.mapSize.width = 2048
+  directionaLight.shadow.mapSize.height = 2048
+  directionaLight.shadow.camera.near = 0.1
+  directionaLight.shadow.camera.far = 50
   directionaLight.shadow.radius = 10
-  directionaLight.shadow.bias = -0.001;
-  scene.add( directionaLight );
+  directionaLight.shadow.bias = -0.001
+  scene.add( directionaLight )
 
-  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.0 );
+  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.0 )
   hemisphereLight.position.set(0, 10, 10)
-  scene.add( hemisphereLight );
+  scene.add( hemisphereLight )
 
   // const ambientLight = new THREE.AmbientLight( 0x404040, 1 ); // 柔和的白光
   // scene.add( ambientLight );  
@@ -82,7 +82,7 @@ export function initOrbitControls(camera, domElement, target) {
   controls.target = target
   controls.enableDamping = true
   controls.dampingFactor = 0.05
-  controls.maxDistance  = 3
+  controls.maxDistance  = 20
   controls.minDistance  = 0.5
   controls.maxPolarAngle  = 1.6
   controls.minPolarAngle  = 0.8
