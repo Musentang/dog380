@@ -6,9 +6,9 @@
 import Com3DBtn from '@/components/3DBtn.vue'
 import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
-import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr } from '@/App.js'
+import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr, calcSunXYZ } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
-
+import dayjs from 'dayjs'
 // import { GUI } from 'dat.gui'
 // const gui = new GUI()
 
@@ -19,7 +19,7 @@ const CAMERA_TARGET = new THREE.Vector3(0, 0.3, 0)
 const scene = initScene()
 const renderer = initRenderer()
 const camera = initCamera(CAMERA_TARGET)
-const { directionaLight, directionaLightTarget, hemisphereLight, spotLight } = initLight(scene)
+const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
 const switchOpen = ref(false)
 
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
@@ -96,24 +96,19 @@ function forestLoadSuccess(gltf) {
   })
 }
 
-sunMove()
-function sunMove() {
-  new TWEEN.Tween(directionaLight.position).to({
-    x: -15
-  }, 30000).start().repeat(Infinity)
-  
-  new TWEEN.Tween(directionaLight).to({
-    intensity: 1
-  }, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
-  
+function hemisphereLightChange(val) {
   new TWEEN.Tween(hemisphereLight).to({
-    intensity: 0.6
-  }, 15000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In).yoyo(true)
+    intensity: val
+  }, 2000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In)
 }
-
+let time = dayjs(new Date(2023,5,1,10,0,0))
 function run () {
   stats.begin(); // ======= stats.begin =======
 
+  time = time.add(1, 'minute')
+  const {x,y,z} = calcSunXYZ(115.7, 40, time)
+  console.log(y);
+  directionaLight.position.set(x,y,z)
   TWEEN.update()
   mixer.update(clock.getDelta())
   orbitControls.update()
@@ -167,8 +162,8 @@ document.body.appendChild(stats.domElement);
 const helper = new THREE.DirectionalLightHelper( directionaLight, 5 );
 scene.add( helper );
 
-const spotLightHelper = new THREE.SpotLightHelper( spotLight );
-scene.add( spotLightHelper );
+// const spotLightHelper = new THREE.SpotLightHelper( spotLight );
+// scene.add( spotLightHelper );
 // helper end=========
 
 </script>

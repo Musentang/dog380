@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import SunCalc from 'suncalc'
 
 export function createSphereSkybox(scene) {
   const textloader = new THREE.TextureLoader().load('models/bg.jpeg')
@@ -44,8 +45,8 @@ export function initCamera(target) {
 }
 
 export function initLight(scene) {
-  const directionaLight = new THREE.DirectionalLight(0xffffff, 0.0)
-  directionaLight.position.set(30, 10, 5)
+  const directionaLight = new THREE.DirectionalLight(0xffffff, 1.0)
+  directionaLight.position.set(-1.89, 23.97, 6.82)
   directionaLight.castShadow = true
   directionaLight.shadow.mapSize.width = 2048
   directionaLight.shadow.mapSize.height = 2048
@@ -55,7 +56,7 @@ export function initLight(scene) {
   directionaLight.shadow.bias = -0.001
   scene.add( directionaLight )
 
-  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.0 )
+  const hemisphereLight = new THREE.HemisphereLight( 0xffffbb, 0x080820, 0.6 )
   hemisphereLight.position.set(0, 10, 10)
   scene.add( hemisphereLight )
 
@@ -82,7 +83,7 @@ export function initOrbitControls(camera, domElement, target) {
   controls.target = target
   controls.enableDamping = true
   controls.dampingFactor = 0.05
-  controls.maxDistance  = 20
+  controls.maxDistance  = 100
   controls.minDistance  = 0.5
   controls.maxPolarAngle  = 1.6
   controls.minPolarAngle  = 0.8
@@ -115,4 +116,34 @@ export function randomArr(arr, randomValue) {
   const rangeArr = getRandomMap(arr)
   const index = getRangeMapValue(rangeArr, randomValue)
   return index
+}
+
+export function calcSunXYZ(longitude = 115.7, latitude = 39.4, obsTime) {
+  // 设置观测的时间
+  // const obsTime = new Date('2023-06-20 10:00:00'); // 格式：'yyyy-mm-ddThh:mm:ss'
+
+
+  // get today's sunlight times for London
+  // var times = SunCalc.getTimes(obsTime, latitude, longitude);
+
+  // format sunrise time from the Date object
+  // var sunriseStr = times.sunrise.getHours() + ':' + times.sunrise.getMinutes();
+
+  // get position of the sun (azimuth and altitude) at today's sunrise
+  // console.log(times)
+  // var sunrisePos = SunCalc.getPosition(times.sunrise, latitude, longitude);
+  const sunPosition = SunCalc.getPosition(obsTime, latitude, longitude);
+
+  // get sunrise azimuth in degrees
+  // var sunriseAzimuth = sunrisePos.azimuth * 180 / Math.PI;
+
+  const distance = 25;
+
+  // 计算太阳在三维坐标系中的坐标
+  const x = -distance * Math.cos(sunPosition.altitude) * Math.sin(sunPosition.azimuth);
+  const y = distance * Math.sin(sunPosition.altitude);
+  const z = distance * Math.cos(sunPosition.altitude) * Math.cos(sunPosition.azimuth);
+
+  // console.log("太阳坐标 (x, y, z):", x, y, z);
+  return {x,y,z}
 }
