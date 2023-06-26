@@ -1,0 +1,11 @@
+Model Information:
+* title:	Loading Cat
+* source:	https://sketchfab.com/3d-models/loading-cat-97ebeb08abc448ba8f42d19492951465
+* author:	WON (https://sketchfab.com/won1)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Loading Cat" (https://sketchfab.com/3d-models/loading-cat-97ebeb08abc448ba8f42d19492951465) by WON (https://sketchfab.com/won1) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

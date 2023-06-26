@@ -9,8 +9,8 @@ import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr, calcSunXYZ } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
 import dayjs from 'dayjs'
-// import { GUI } from 'dat.gui'
-// const gui = new GUI()
+import { GUI } from 'dat.gui'
+const gui = new GUI()
 
 const clock = new THREE.Clock()
 let mixer = null
@@ -99,15 +99,33 @@ function forestLoadSuccess(gltf) {
 function hemisphereLightChange(val) {
   new TWEEN.Tween(hemisphereLight).to({
     intensity: val
-  }, 2000).start().repeat(Infinity).easing(TWEEN.Easing.Exponential.In)
+  }, 2000).start()
 }
-let time = dayjs(new Date(2023,5,1,10,0,0))
+let time = new Date()
+const {x,y} = calcSunXYZ(115.7, 40, time)
+let isDay = checkIsDay(x, y);
+
+function checkIsDay(x, y) {
+  if ((y <= 0 && x <= 0) || (y <= 0 && x >= 0)) {
+    return true
+  } else if ((y >= 0 && x <= 0) || (y >= 0 && x >= 0)) {
+    return false
+  }
+}
+
 function run () {
   stats.begin(); // ======= stats.begin =======
 
-  time = time.add(1, 'minute')
+  // time = time.add(1, 'minute')
+  // time = new Date()
   const {x,y,z} = calcSunXYZ(115.7, 40, time)
-  console.log(y);
+  if (y < 0 && x < 0 && isDay === true) {
+    isDay = false
+    hemisphereLightChange(0.0)
+  } else if (y > 0 && x > 0 && isDay === false) {
+    isDay = true
+    hemisphereLightChange(0.6)
+  }
   directionaLight.position.set(x,y,z)
   TWEEN.update()
   mixer.update(clock.getDelta())
@@ -164,6 +182,16 @@ scene.add( helper );
 
 // const spotLightHelper = new THREE.SpotLightHelper( spotLight );
 // scene.add( spotLightHelper );
+const sunObj = {
+  time: 0
+}
+const folder = gui.addFolder('sun position');
+const timeChange = folder.add(sunObj, 'time', 0, 24, 1)
+timeChange.onChange(val => {
+  time = new Date(dayjs(new Date).format('YYYY-MM-DD') + ' ' + val + ':00:00')
+  const {x, y} = calcSunXYZ(115.7, 40, time)
+  isDay = checkIsDay(x, y);
+})
 // helper end=========
 
 </script>
