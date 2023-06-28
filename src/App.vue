@@ -9,6 +9,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr, calcSunXYZ } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
+import {snowScene} from './packages/snow.js'
 import dayjs from 'dayjs'
 import { GUI } from 'dat.gui'
 const gui = new GUI()
@@ -201,7 +202,6 @@ function dog380Click() {
   currAction = actions[index]
   currAction.play()
 }
-
 // helper =========
 var axesHelper = new THREE.AxesHelper(5) 
 scene.add(axesHelper)
@@ -226,6 +226,7 @@ timeChange.onChange(val => {
   const {x, y} = calcSunXYZ(115.7, 40, time)
   isDay = checkIsDay(x, y);
 })
+
 // helper end=========
 
 </script>
