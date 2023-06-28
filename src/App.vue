@@ -1,5 +1,6 @@
 <template>
 <Com3DBtn class="street-lamp-switch" v-model="switchOpen" />
+<img class="home-btn" @click="changeScene" src="@/img/home.png" alt="">
 </template>
 
 <script setup>
@@ -30,7 +31,7 @@ modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.gl
   forestLoadSuccess(forest)
   run(0)
 })
-
+// 'models/scene2/rabbit_s_home.glb'
 createSphereSkybox(scene)
 
 const WAIT_ANIMATIONS = [0,1,3,9] // 待机 0,1,3,9
@@ -72,15 +73,18 @@ function dogLoadSuccess(gltf) {
   currAction.play()
 }
 
+let sceneModel = null
 function forestLoadSuccess(gltf) {
-  var model = gltf.scene
-  model.position.set(-0.72,-0.83,0)
+  sceneModel = gltf.scene
+  sceneModel.position.set(-0.72,-0.83,0)
+  // model.position.set(0,2.28,-1.3)
+  // model.scale.set(0.3, 0.3, 0.3)
   // gui.add(model.position, 'x', -10, 10, 0.01)
   // gui.add(model.position, 'y', -10, 10, 0.01)
   // gui.add(model.position, 'z', -10, 10, 0.01)
-  scene.add(model)
+  scene.add(sceneModel)
 
-  model.traverse(function (child) {
+  sceneModel.traverse(function (child) {
     if (child instanceof THREE.Mesh) {
       if (child.name.includes('Tree')) {
         // child.material = new THREE.MeshPhysicalMaterial({
@@ -94,6 +98,36 @@ function forestLoadSuccess(gltf) {
       child.receiveShadow = true // 模型接收阴影
     }
   })
+}
+
+function treeHouseSuccess(gltf) {
+  sceneModel = gltf.scene
+  sceneModel.position.set(0,2.28,-1.3)
+  sceneModel.scale.set(0.3, 0.3, 0.3)
+  scene.add(sceneModel)
+  sceneModel.traverse(function (child) {
+    if (child instanceof THREE.Mesh) {
+      child.castShadow = true 
+      child.receiveShadow = true
+    }
+  })
+}
+
+function changeScene() {
+  if (sceneModel) {
+    scene.remove(sceneModel);
+    // sceneModel.geometry.dispose();
+    // sceneModel.material.dispose();
+    modelsImport('models/scene2/rabbit_s_home.glb').then(([treeHouse]) => {
+      treeHouseSuccess(treeHouse)
+      hemisphereLight.position.set(0, 2, 10)
+      gui.add(hemisphereLight.position, 'x', -10, 10, 0.01)
+      gui.add(hemisphereLight.position, 'y', -10, 10, 0.01)
+      gui.add(hemisphereLight.position, 'z', -10, 10, 0.01)
+      
+      hemisphereLight.intensity = 1.5
+    })
+  }
 }
 
 function hemisphereLightChange(val) {
@@ -201,5 +235,15 @@ timeChange.onChange(val => {
   position: fixed;
   right: 0;
   top: 20%;
+}
+.home-btn {
+  position: fixed;
+  right: 0;
+  top: 300px;
+  z-index: 999;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  cursor: pointer;
 }
 </style>

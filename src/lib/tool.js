@@ -3,7 +3,8 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 const GLTF_LOADER = new GLTFLoader();
 
 const extMap = {
-  glb: GLTF_LOADER
+  glb: GLTF_LOADER,
+  gltf: GLTF_LOADER
 }
 
 export function modelsImport(...url) {
