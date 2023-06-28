@@ -8,7 +8,7 @@ import * as THREE from 'three'
 export function snowScene() {
   // 创建例子缓冲区
   const particlesGeometry = new THREE.BufferGeometry()
-  const scene = new THREE.Scene()
+  // const scene = new THREE.Scene()
   const count = 10000
   // 创建缓冲区存储雪花的粒子
   const position = new Float32Array(count * 3)
@@ -24,7 +24,8 @@ export function snowScene() {
   const pointsMaterial = new THREE.PointsMaterial()
   pointsMaterial.size = 0.5
   // 载入纹理
-  const textureLoader = new THREE.TextureLoader('../img/snow.png')
+  const textureLoader = new THREE.TextureLoader()
+  const texture = textureLoader.load('../img/snow.png');
   // 设置点材质纹理
   pointsMaterial.map = texture
   pointsMaterial.alphaMap = texture
