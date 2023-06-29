@@ -10,6 +10,7 @@ import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr, calcSunXYZ } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
 import dayjs from 'dayjs'
+import { LightProbeHelper } from 'three/addons/helpers/LightProbeHelper.js';
 import { GUI } from 'dat.gui'
 const gui = new GUI()
 
@@ -106,7 +107,7 @@ function treeHouseSuccess(gltf) {
   sceneModel.scale.set(0.3, 0.3, 0.3)
   scene.add(sceneModel)
   sceneModel.traverse(function (child) {
-    if (child instanceof THREE.Mesh) {
+    if (child.isMesh) {
       child.castShadow = true 
       child.receiveShadow = true
     }
@@ -116,16 +117,20 @@ function treeHouseSuccess(gltf) {
 function changeScene() {
   if (sceneModel) {
     scene.remove(sceneModel);
-    // sceneModel.geometry.dispose();
-    // sceneModel.material.dispose();
     modelsImport('models/scene2/rabbit_s_home.glb').then(([treeHouse]) => {
       treeHouseSuccess(treeHouse)
-      hemisphereLight.position.set(0, 2, 10)
-      gui.add(hemisphereLight.position, 'x', -10, 10, 0.01)
-      gui.add(hemisphereLight.position, 'y', -10, 10, 0.01)
-      gui.add(hemisphereLight.position, 'z', -10, 10, 0.01)
-      
-      hemisphereLight.intensity = 1.5
+      // const ambientLight = new THREE.AmbientLight( 0x404040, 10 );
+      // scene.add( ambientLight );  
+      const pointLight = new THREE.PointLight( 0x404040, 1, 100 );
+      pointLight.position.set( 0, 5, 5 );
+      scene.add( pointLight );
+      // gui.add(model.position, 'x', -10, 10, 0.01)
+      // gui.add(model.position, 'y', -10, 10, 0.01)
+      // gui.add(model.position, 'z', -10, 10, 0.01)
+
+      const sphereSize = 0.2;
+      const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
+      scene.add( pointLightHelper );
     })
   }
 }
