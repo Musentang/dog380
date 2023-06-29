@@ -23,6 +23,7 @@ const renderer = initRenderer()
 const camera = initCamera(CAMERA_TARGET)
 const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
 const switchOpen = ref(false)
+snowScene(scene)
 
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
 
@@ -162,7 +163,6 @@ function run () {
     hemisphereLightChange(0.6)
   }
   directionaLight.position.set(x,y,z)
-  snowScene()
   TWEEN.update()
   mixer.update(clock.getDelta())
   orbitControls.update()
