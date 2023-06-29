@@ -1,7 +1,6 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import SunCalc from 'suncalc'
-// import { nowScene } from './packages/snow.js'
 
 export function createSphereSkybox(scene) {
   const textloader = new THREE.TextureLoader().load('models/bg.jpeg')

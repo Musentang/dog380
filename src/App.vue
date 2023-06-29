@@ -162,6 +162,7 @@ function run () {
     hemisphereLightChange(0.6)
   }
   directionaLight.position.set(x,y,z)
+  snowScene()
   TWEEN.update()
   mixer.update(clock.getDelta())
   orbitControls.update()

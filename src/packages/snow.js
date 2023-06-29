@@ -4,11 +4,12 @@
  * Date: 2023-06-28
  */
 import * as THREE from 'three'
+import snowImg from "@/img/snow.png"
 
 export function snowScene() {
   // 创建例子缓冲区
   const particlesGeometry = new THREE.BufferGeometry()
-  // const scene = new THREE.Scene()
+  const scene = new THREE.Scene()
   const count = 10000
   // 创建缓冲区存储雪花的粒子
   const position = new Float32Array(count * 3)
@@ -18,18 +19,23 @@ export function snowScene() {
   }
   particlesGeometry.setAttribute(
     'position',
-    new THREE.BufferAttribute(positions, 3)
+    new THREE.BufferAttribute(position, 3)
   )
   //4、设置点的纹理材质（雪花贴图）
   const pointsMaterial = new THREE.PointsMaterial()
   pointsMaterial.size = 0.5
+  pointsMaterial.opacity = 0.5
   // 载入纹理
   const textureLoader = new THREE.TextureLoader()
-  const texture = textureLoader.load('../img/snow.png');
+  const texture = textureLoader.load(snowImg);
+  // console.log(texture, 'texture====')
   // 设置点材质纹理
   pointsMaterial.map = texture
   pointsMaterial.alphaMap = texture
 
+  const points = new THREE.Points(particlesGeometry, pointsMaterial)
+  points.rotation.x += 3*Math.pow(10,-3)
+  points.position.y = -30
   // 加入场景搞定
   scene.add(points)
 }
