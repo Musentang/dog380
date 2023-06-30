@@ -55,7 +55,7 @@ export function snowScene(scene, renderer, camera) {
       if(res.x <= -range / 2 || res.x >= range / 2) res.x = res.x * -1
       if(res.z <= -range / 2 || res.z >= range / 2) res.velocityZ = res.velocityZ * -1
     })
-    // 每次计算完为止从新渲染
+    // 每次计算完位置从新渲染
     particlesGeometry.setFromPoints(position)
     const points = new THREE.Points(particlesGeometry, pointsMaterial)
     scene.add(points)
