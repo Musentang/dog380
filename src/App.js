@@ -60,8 +60,8 @@ export function initLight(scene) {
   hemisphereLight.position.set(0, 10, 10)
   scene.add( hemisphereLight )
 
-  // const ambientLight = new THREE.AmbientLight( 0x404040, 1 ); // 柔和的白光
-  // scene.add( ambientLight );  
+  const ambientLight = new THREE.AmbientLight( 0x404040, 0.0 ); // 柔和的白光
+  scene.add( ambientLight );  
 
   const spotLight = new THREE.SpotLight( 0xfff5c9, 0.0 );
   spotLight.position.set( 0, 3, 0 );

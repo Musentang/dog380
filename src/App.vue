@@ -114,20 +114,16 @@ function treeHouseSuccess(gltf) {
   })
 }
 
+let pointLight
 function changeScene() {
   if (sceneModel) {
     scene.remove(sceneModel);
     modelsImport('models/scene2/rabbit_s_home.glb').then(([treeHouse]) => {
       treeHouseSuccess(treeHouse)
-      // const ambientLight = new THREE.AmbientLight( 0x404040, 10 );
-      // scene.add( ambientLight );  
-      const pointLight = new THREE.PointLight( 0x404040, 1, 100 );
-      pointLight.position.set( 0, 5, 5 );
+      ambientLight.intensity = 3
+      pointLight = new THREE.PointLight( 0x404040, 4, 100 );
+      pointLight.position.set( 0, 1.5, -0.5 );
       scene.add( pointLight );
-      // gui.add(model.position, 'x', -10, 10, 0.01)
-      // gui.add(model.position, 'y', -10, 10, 0.01)
-      // gui.add(model.position, 'z', -10, 10, 0.01)
-
       const sphereSize = 0.2;
       const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
       scene.add( pointLightHelper );
