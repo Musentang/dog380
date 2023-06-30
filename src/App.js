@@ -3,7 +3,7 @@ import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
 import SunCalc from 'suncalc'
 
 export function createSphereSkybox(scene) {
-  const textloader = new THREE.TextureLoader().load('models/bg.jpeg')
+  const textloader = new THREE.TextureLoader().load('/skyboximg/carton_bg.jpeg')
   const geometry = new THREE.SphereGeometry(50, 32, 32)
   const material = new THREE.MeshBasicMaterial({
     side: THREE.DoubleSide,
