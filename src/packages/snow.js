@@ -31,18 +31,19 @@ export function snowScene(scene, renderer, camera) {
   const texture = textureLoader.load(snowImg);
   //4、设置点的纹理材质（雪花贴图）
   const pointsMaterial = new THREE.PointsMaterial({
-    'size': .3,
+    'size': .9,
     'transparent': true,
-    'opacity': .1,
+    'opacity': 1,
     'map': texture,
     'sizeAttenuation': true,
     // 该融合模式表示，在画新像素时背景像素的颜色会被添加到新像素上。
     // 在本案例中，意味着黑色背景不会被加载出来，我们也可以把纹理背景定义为透明色，也会有类似效果。
-    'blending': THREE.AdditiveBlending,
+    // 'blending': THREE.AdditiveBlending,
     'depthTest': false, // 解决贴图黑边的问题
     'depthWrite': false // 保证粒子之间不会互相影响
   })
-
+  const points = new THREE.Points(particlesGeometry, pointsMaterial)
+  scene.add(points)
   // 帧动画
   function renderScence() {
     position.map((res) => {
@@ -56,10 +57,10 @@ export function snowScene(scene, renderer, camera) {
       if(res.z <= -range / 2 || res.z >= range / 2) res.velocityZ = res.velocityZ * -1
     })
     // 每次计算完位置从新渲染
-    particlesGeometry.setFromPoints(position)
-    const points = new THREE.Points(particlesGeometry, pointsMaterial)
-    scene.add(points)
-    renderer.render(scene, camera)
+    points.geometry.setFromPoints(position)
+    // const points = new THREE.Points(particlesGeometry, pointsMaterial)
+    // scene.add(points)
+    // renderer.render(scene, camera)
     requestAnimationFrame(renderScence)
   }
   renderScence()
