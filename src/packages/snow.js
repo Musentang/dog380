@@ -31,9 +31,9 @@ export function snowScene(scene, renderer, camera) {
   const texture = textureLoader.load(snowImg);
   //4、设置点的纹理材质（雪花贴图）
   const pointsMaterial = new THREE.PointsMaterial({
-    'size': .5,
+    'size': .3,
     'transparent': true,
-    'opacity': 0.2,
+    'opacity': .1,
     'map': texture,
     'sizeAttenuation': true,
     // 该融合模式表示，在画新像素时背景像素的颜色会被添加到新像素上。
