@@ -75,7 +75,7 @@ export function initLight(scene) {
   spotLight.angle = Math.PI/13
   scene.add( spotLight );
 
-  return { directionaLight, hemisphereLight, spotLight }
+  return { directionaLight, hemisphereLight, spotLight, ambientLight }
 }
 
 export function initOrbitControls(camera, domElement, target) {

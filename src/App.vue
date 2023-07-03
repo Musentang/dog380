@@ -22,7 +22,7 @@ const CAMERA_TARGET = new THREE.Vector3(0, 0.3, 0)
 const scene = initScene()
 const renderer = initRenderer()
 const camera = initCamera(CAMERA_TARGET)
-const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
+const { directionaLight, hemisphereLight, spotLight, ambientLight } = initLight(scene)
 const switchOpen = ref(false)
 snowScene(scene, renderer, camera)
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
@@ -123,7 +123,7 @@ function changeScene() {
       treeHouseSuccess(treeHouse)
       ambientLight.intensity = 3
       pointLight = new THREE.PointLight( 0x404040, 4, 100 );
-      pointLight.position.set( 0, 1.5, -0.5 );
+      pointLight.position.set( 0, 1, -0.5 );
       scene.add( pointLight );
       const sphereSize = 0.2;
       const pointLightHelper = new THREE.PointLightHelper( pointLight, sphereSize );
