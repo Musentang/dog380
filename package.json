@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@esotericsoftware/spine-threejs": "^4.2.15",
     "@tweenjs/tween.js": "^20.0.3",
     "dat.gui": "^0.7.9",
     "dayjs": "^1.11.8",

@@ -12,6 +12,8 @@ import { modelsImport } from '@/lib/tool.js'
 import { snowScene } from './packages/snow.js'
 import dayjs from 'dayjs'
 import { LightProbeHelper } from 'three/addons/helpers/LightProbeHelper.js';
+import * as spine from '@esotericsoftware/spine-threejs'
+console.log(spine,88)
 import { GUI } from 'dat.gui'
 const gui = new GUI()
 
@@ -24,17 +26,17 @@ const renderer = initRenderer()
 const camera = initCamera(CAMERA_TARGET)
 const { directionaLight, hemisphereLight, spotLight, ambientLight } = initLight(scene)
 const switchOpen = ref(false)
-snowScene(scene, renderer, camera)
+// snowScene(scene, renderer, camera)
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
 
 const orbitControls = initOrbitControls(camera, renderer.domElement, CAMERA_TARGET)
 modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.glb').then(([dog, forest]) => {
-  dogLoadSuccess(dog)
-  forestLoadSuccess(forest)
+  // dogLoadSuccess(dog)
+  // forestLoadSuccess(forest)
   run(0)
 })
 // 'models/scene2/rabbit_s_home.glb'
-createSphereSkybox(scene)
+// createSphereSkybox(scene)
 
 const WAIT_ANIMATIONS = [0, 1, 3, 9] // 待机 0,1,3,9
 const INTERACT_ANIMATIONS = [2, 5, 7, 8] // 交互 2,5,7,8
@@ -148,6 +150,50 @@ function checkIsDay(x, y) {
     return false
   }
 }
+let atlas, atlasLoader, geometry, material, mesh, skeletonMesh
+let baseUrl = 'http://localhost:5173/models/spine/'
+let skeletonFile = "raptor-pro.json";
+let atlasFile = skeletonFile.replace("-pro", "").replace("-ess", "").replace(".json", ".atlas");
+async function initSpine () {
+  let assetManager;
+  assetManager = new spine.AssetManager(baseUrl);
+  assetManager.loadText(skeletonFile);
+  assetManager.loadTextureAtlas(atlasFile);
+  await assetManager.loadAll();
+
+
+  geometry = new THREE.BoxGeometry(200, 200, 200);
+  material = new THREE.MeshBasicMaterial({ color: 0xff0000, wireframe: true });
+  mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
+
+  // Load the texture atlas using name.atlas and name.png from the AssetManager.
+  // The function passed to TextureAtlas is used to resolve relative paths.
+  atlas = assetManager.require(atlasFile);
+
+  // Create a AtlasAttachmentLoader that resolves region, mesh, boundingbox and path attachments
+  atlasLoader = new spine.AtlasAttachmentLoader(atlas);
+
+  // Create a SkeletonJson instance for parsing the .json file.
+  let skeletonJson = new spine.SkeletonJson(atlasLoader);
+
+  // Set the scale to apply during parsing, parse the file, and create a new skeleton.
+  skeletonJson.scale = 0.01;
+  let skeletonData = skeletonJson.readSkeletonData(assetManager.require(skeletonFile));
+
+  // Create a SkeletonMesh from the data and attach it to the scene
+  skeletonMesh = new spine.SkeletonMesh(skeletonData, (parameters) => {
+    parameters.depthTest = true;
+    parameters.depthWrite = true;
+    parameters.alphaTest = 0.001;
+  });
+  skeletonMesh.state.setAnimation(0, 'walk', true);
+  console.log(skeletonMesh.state)
+  skeletonMesh.position.set(-6, -4, 0)
+  mesh.add(skeletonMesh);
+}
+
+initSpine()
 
 function run() {
   stats.begin(); // ======= stats.begin =======
@@ -164,7 +210,8 @@ function run() {
   }
   directionaLight.position.set(x, y, z)
   TWEEN.update()
-  mixer.update(clock.getDelta())
+  // mixer.update(clock.getDelta())
+  skeletonMesh.update(clock.getDelta());
   orbitControls.update()
   renderer.render(scene, camera)
 

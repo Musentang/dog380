@@ -83,7 +83,7 @@ export function initOrbitControls(camera, domElement, target) {
   controls.target = target
   controls.enableDamping = true
   controls.dampingFactor = 0.05
-  controls.maxDistance  = 100
+  controls.maxDistance  = 1000
   controls.minDistance  = 0.5
   controls.maxPolarAngle  = 1.6
   controls.minPolarAngle  = 0.8
