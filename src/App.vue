@@ -1,6 +1,6 @@
 <template>
-<Com3DBtn class="street-lamp-switch" v-model="switchOpen" />
-<img class="home-btn" @click="changeScene" src="@/img/home.png" alt="">
+  <Com3DBtn class="street-lamp-switch" v-model="switchOpen" />
+  <img class="home-btn" @click="changeScene" src="@/img/home.png" alt="">
 </template>
 
 <script setup>
@@ -9,6 +9,7 @@ import * as THREE from 'three'
 import * as TWEEN from '@tweenjs/tween.js'
 import { createSphereSkybox, initRenderer, initCamera, initLight, initScene, initOrbitControls, randomArr, calcSunXYZ } from '@/App.js'
 import { modelsImport } from '@/lib/tool.js'
+import { snowScene } from './packages/snow.js'
 import dayjs from 'dayjs'
 import { LightProbeHelper } from 'three/addons/helpers/LightProbeHelper.js';
 import { GUI } from 'dat.gui'
@@ -23,7 +24,7 @@ const renderer = initRenderer()
 const camera = initCamera(CAMERA_TARGET)
 const { directionaLight, hemisphereLight, spotLight } = initLight(scene)
 const switchOpen = ref(false)
-
+snowScene(scene, renderer, camera)
 watch(() => switchOpen.value, val => spotLight.intensity = val ? 1.2 : 0.0)
 
 const orbitControls = initOrbitControls(camera, renderer.domElement, CAMERA_TARGET)
@@ -35,19 +36,19 @@ modelsImport('models/dog/source/animation-10-Rover.glb', 'models/fairy_forest.gl
 // 'models/scene2/rabbit_s_home.glb'
 createSphereSkybox(scene)
 
-const WAIT_ANIMATIONS = [0,1,3,9] // 待机 0,1,3,9
-const INTERACT_ANIMATIONS = [2,5,7,8] // 交互 2,5,7,8
-const MOVE_ANIMATIONS = [4,6] // 移动 4,6
+const WAIT_ANIMATIONS = [0, 1, 3, 9] // 待机 0,1,3,9
+const INTERACT_ANIMATIONS = [2, 5, 7, 8] // 交互 2,5,7,8
+const MOVE_ANIMATIONS = [4, 6] // 移动 4,6
 let dog380Status = 0 // 0 待机 1 交互 2 移动
 let currAction = null
 const actions = []
 function dogLoadSuccess(gltf) {
   var model = gltf.scene
-  model.scale.set(0.3,0.3,0.3)
+  model.scale.set(0.3, 0.3, 0.3)
   scene.add(model)
   model.traverse(function (child) {
     if (child instanceof THREE.Mesh) {
-      child.castShadow = true 
+      child.castShadow = true
       child.receiveShadow = true
     }
   })
@@ -58,7 +59,7 @@ function dogLoadSuccess(gltf) {
     const action = mixer.clipAction(animation)
     action.clampWhenFinished = true
     action.loop = THREE.LoopOnce
-    
+
     actions.push(action)
   })
   mixer.addEventListener('finished', () => {
@@ -77,7 +78,7 @@ function dogLoadSuccess(gltf) {
 let sceneModel = null
 function forestLoadSuccess(gltf) {
   sceneModel = gltf.scene
-  sceneModel.position.set(-0.72,-0.83,0)
+  sceneModel.position.set(-0.72, -0.83, 0)
   // model.position.set(0,2.28,-1.3)
   // model.scale.set(0.3, 0.3, 0.3)
   // gui.add(model.position, 'x', -10, 10, 0.01)
@@ -94,7 +95,7 @@ function forestLoadSuccess(gltf) {
         //   roughness: 0.7
         // });
       }
-      child.castShadow = true 
+      child.castShadow = true
       // child.material = new THREE.MeshStandardMaterial({  wireframe: false })
       child.receiveShadow = true // 模型接收阴影
     }
@@ -103,7 +104,7 @@ function forestLoadSuccess(gltf) {
 
 function treeHouseSuccess(gltf) {
   sceneModel = gltf.scene
-  sceneModel.position.set(0,2.28,-1.3)
+  sceneModel.position.set(0, 2.28, -1.3)
   sceneModel.scale.set(0.3, 0.3, 0.3)
   scene.add(sceneModel)
   sceneModel.traverse(function (child) {
@@ -137,7 +138,7 @@ function hemisphereLightChange(val) {
   }, 2000).start()
 }
 let time = new Date()
-const {x,y} = calcSunXYZ(115.7, 40, time)
+const { x, y } = calcSunXYZ(115.7, 40, time)
 let isDay = checkIsDay(x, y);
 
 function checkIsDay(x, y) {
@@ -148,12 +149,12 @@ function checkIsDay(x, y) {
   }
 }
 
-function run () {
+function run() {
   stats.begin(); // ======= stats.begin =======
 
   // time = time.add(1, 'minute')
   // time = new Date()
-  const {x,y,z} = calcSunXYZ(115.7, 40, time)
+  const { x, y, z } = calcSunXYZ(115.7, 40, time)
   if (y < 0 && x < 0 && isDay === true) {
     isDay = false
     hemisphereLightChange(0.0)
@@ -161,7 +162,7 @@ function run () {
     isDay = true
     hemisphereLightChange(0.6)
   }
-  directionaLight.position.set(x,y,z)
+  directionaLight.position.set(x, y, z)
   TWEEN.update()
   mixer.update(clock.getDelta())
   orbitControls.update()
@@ -184,7 +185,7 @@ document.addEventListener('click', e => {
   let ponit3d = null
   if (intersects.length) {
     ponit3d = intersects[0]
-  } 
+  }
   if (ponit3d) {
     console.log(ponit3d.object.name);
     if (ponit3d.object.name === 'Rover') {
@@ -202,9 +203,8 @@ function dog380Click() {
   currAction = actions[index]
   currAction.play()
 }
-
 // helper =========
-var axesHelper = new THREE.AxesHelper(5) 
+var axesHelper = new THREE.AxesHelper(5)
 scene.add(axesHelper)
 
 var stats = new Stats();
@@ -212,8 +212,8 @@ stats.domElement.style = 'position:fixed;top:0;left:0;z-index:10000;'
 stats.showPanel(0); // 0: fps, 1: ms, 2: mb, 3+: custom
 document.body.appendChild(stats.domElement);
 
-const helper = new THREE.DirectionalLightHelper( directionaLight, 5 );
-scene.add( helper );
+const helper = new THREE.DirectionalLightHelper(directionaLight, 5);
+scene.add(helper);
 
 // const spotLightHelper = new THREE.SpotLightHelper( spotLight );
 // scene.add( spotLightHelper );
@@ -224,9 +224,11 @@ const folder = gui.addFolder('sun position');
 const timeChange = folder.add(sunObj, 'time', 0, 24, 1)
 timeChange.onChange(val => {
   time = new Date(dayjs(new Date).format('YYYY-MM-DD') + ' ' + val + ':00:00')
-  const {x, y} = calcSunXYZ(115.7, 40, time)
+  const { x, y } = calcSunXYZ(115.7, 40, time)
   isDay = checkIsDay(x, y);
 })
+
+
 // helper end=========
 
 </script>
@@ -237,6 +239,7 @@ timeChange.onChange(val => {
   right: 0;
   top: 20%;
 }
+
 .home-btn {
   position: fixed;
   right: 0;
